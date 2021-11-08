@@ -1,0 +1,6 @@
+github.com/koykov/fastconv v0.0.0-20211028200057-f6897ace3bc2 h1:jIlvXIudUQ6ER2y/oExe8Qa3lnZ+6C0BpPthjfDhxvs=
+github.com/koykov/fastconv v0.0.0-20211028200057-f6897ace3bc2/go.mod h1:JXdtdh0aCcSmxLsVUoYP61lmxpL6dWOXEKxCIR+MlGg=
+github.com/koykov/hash v0.0.0-20210824200435-8eb1b95341ae h1:ZzQQgWhPGrY76LgOniZ6XWt9y0HXsK7FQDR+Fue09OU=
+github.com/koykov/hash v0.0.0-20210824200435-8eb1b95341ae/go.mod h1:+utwpI8WtsRQsCwtxNZKTCobJuJ8j3RNjTYLb270u+U=
+github.com/koykov/policy v0.0.0-20201212213550-1b5a0bfb7590 h1:v349mTziKohKSGykodaOr+T2gXLuYtlm6D7isucUjts=
+github.com/koykov/policy v0.0.0-20201212213550-1b5a0bfb7590/go.mod h1:wHHIIRCCjvlBtX4mSGEBALSAlyrdRA02GTk/jBP+ufg=
