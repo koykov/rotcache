@@ -17,6 +17,12 @@ func (c *RotCache) Set(key string, val []byte) error {
 	if c.Hasher == nil {
 		return ErrNoHasher
 	}
+	if len(key) == 0 {
+		return ErrNoKey
+	}
+	if len(val) == 0 {
+		return ErrNoValue
+	}
 	c.set(c.Hasher.Sum64(key), val)
 	return nil
 }
@@ -26,11 +32,17 @@ func (c *RotCache) SSet(key, val string) error {
 }
 
 func (c *RotCache) USet(key uint64, val []byte) error {
+	if len(val) == 0 {
+		return ErrNoValue
+	}
 	c.set(key, val)
 	return nil
 }
 
 func (c *RotCache) USSet(key uint64, val string) error {
+	if len(val) == 0 {
+		return ErrNoValue
+	}
 	c.set(key, fastconv.S2B(val))
 	return nil
 }
