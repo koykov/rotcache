@@ -71,8 +71,17 @@ func (c *RotCache) USGet(key uint64) (s string, err error) {
 	return fastconv.B2S(p), err
 }
 
-func (c *RotCache) Reset() {
+func (c *RotCache) BeginRotate() {
 	c.opp().reset()
+}
+
+func (c *RotCache) Rotate() {
+	switch atomic.LoadUint32(&c.idx) {
+	case 0:
+		atomic.StoreUint32(&c.idx, 1)
+	default:
+		atomic.StoreUint32(&c.idx, 0)
+	}
 }
 
 func (c *RotCache) set(key uint64, val []byte) {
