@@ -21,27 +21,27 @@ func (c *cache) init() *cache {
 	return c
 }
 
-func (c *cache) set(id uint64, val []byte) {
+func (c *cache) set(key uint64, val []byte) {
 	c.lock.Lock()
 	if c.idx == nil {
 		c.idx = make(map[uint64]entry)
 	}
 	var e entry
 	e.encode(uln(c.buf), uln(val))
-	c.idx[id] = e
+	c.idx[key] = e
 	c.buf = append(c.buf, val...)
 	c.lock.Unlock()
 }
 
-func (c *cache) get(id uint64) []byte {
+func (c *cache) get(key uint64) ([]byte, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
-	if e, ok := c.idx[id]; ok {
+	if e, ok := c.idx[key]; ok {
 		if off, ln := e.decode(); ln < uln(c.buf) {
-			return c.buf[off : off+ln]
+			return c.buf[off : off+ln], nil
 		}
 	}
-	return nil
+	return nil, ErrKeyNotFound
 }
 
 func (c *cache) reset() {

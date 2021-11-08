@@ -39,7 +39,7 @@ func (c *RotCache) Get(key string) ([]byte, error) {
 	if c.Hasher == nil {
 		return nil, ErrNoHasher
 	}
-	return c.get(c.Hasher.Sum64(key)), nil
+	return c.get(c.Hasher.Sum64(key))
 }
 
 func (c *RotCache) SGet(key string) (string, error) {
@@ -48,18 +48,26 @@ func (c *RotCache) SGet(key string) (string, error) {
 }
 
 func (c *RotCache) UGet(key uint64) ([]byte, error) {
-	return c.get(key), nil
+	return c.get(key)
 }
 
-func (c *RotCache) USGet(key uint64) (string, error) {
-	return fastconv.B2S(c.get(key)), nil
+func (c *RotCache) USGet(key uint64) (s string, err error) {
+	var p []byte
+	if p, err = c.get(key); err != nil {
+		return "", err
+	}
+	return fastconv.B2S(p), err
+}
+
+func (c *RotCache) Reset() {
+	c.opp().reset()
 }
 
 func (c *RotCache) set(key uint64, val []byte) {
 	c.opp().set(key, val)
 }
 
-func (c *RotCache) get(key uint64) []byte {
+func (c *RotCache) get(key uint64) ([]byte, error) {
 	return c.act().get(key)
 }
 
