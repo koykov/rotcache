@@ -44,32 +44,44 @@ func TestRotCache(t *testing.T) {
 			t.Error("no value check failed")
 		}
 	})
-	t.Run("simple", func(t *testing.T) {
+	t.Run("io", func(t *testing.T) {
 		c := RotCache{Hasher: testHash{}}
 		if err := c.Set("foo", []byte("foobar")); err != nil {
-			t.Error("set failed:", err)
+			t.Error("Set failed:", err)
 		}
-		if err := c.SSet("bar", "foobar"); err != nil {
-			t.Error("sset failed:", err)
+		if err := c.SetString("bar", "foobar"); err != nil {
+			t.Error("SetString failed:", err)
 		}
 		if err := c.USet(10, []byte("foobar")); err != nil {
-			t.Error("uset failed:", err)
+			t.Error("USet failed:", err)
 		}
-		if err := c.USSet(10, "foobar"); err != nil {
-			t.Error("usset failed:", err)
+		if err := c.USetString(10, "foobar"); err != nil {
+			t.Error("UsetString failed:", err)
+		}
+		if err := c.ISet(15, []byte("foobar")); err != nil {
+			t.Error("ISet failed:", err)
+		}
+		if err := c.ISetString(15, "foobar"); err != nil {
+			t.Error("ISetString failed:", err)
 		}
 		c.Rotate()
 		if p, err := c.Get("foo"); err != nil || !bytes.Equal(p, []byte("foobar")) {
-			t.Error("get failed:", err)
+			t.Error("Get failed:", err)
 		}
-		if p, err := c.SGet("foo"); err != nil || p != "foobar" {
-			t.Error("sget failed:", err)
+		if p, err := c.GetString("foo"); err != nil || p != "foobar" {
+			t.Error("GetString failed:", err)
 		}
 		if p, err := c.UGet(10); err != nil || !bytes.Equal(p, []byte("foobar")) {
-			t.Error("uget failed:", err)
+			t.Error("UGet failed:", err)
 		}
-		if p, err := c.USGet(10); err != nil || p != "foobar" {
-			t.Error("usget failed:", err)
+		if p, err := c.UGetString(10); err != nil || p != "foobar" {
+			t.Error("UGetString failed:", err)
+		}
+		if p, err := c.IGet(15); err != nil || !bytes.Equal(p, []byte("foobar")) {
+			t.Error("IGet failed:", err)
+		}
+		if p, err := c.IGetString(15); err != nil || p != "foobar" {
+			t.Error("IGetString failed:", err)
 		}
 	})
 }
