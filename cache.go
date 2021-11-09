@@ -2,12 +2,10 @@ package rotcache
 
 import (
 	"sync"
-
-	"github.com/koykov/policy"
 )
 
 type cache struct {
-	lock policy.Lock
+	lock pseudoLock
 	idx  map[uint64]entry
 	buf  []byte
 	once sync.Once
@@ -15,7 +13,6 @@ type cache struct {
 
 func (c *cache) init() *cache {
 	c.once.Do(func() {
-		c.lock.SetPolicy(policy.LockFree)
 		c.idx = make(map[uint64]entry)
 	})
 	return c
