@@ -2,7 +2,9 @@ package rotcache
 
 import (
 	"bytes"
+	"context"
 	"testing"
+	"time"
 )
 
 type testHash struct{}
@@ -82,6 +84,52 @@ func TestRotCache(t *testing.T) {
 		}
 		if p, err := c.IGetString(15); err != nil || p != "foobar" {
 			t.Error("IGetString failed:", err)
+		}
+	})
+}
+
+func BenchmarkRotCache(b *testing.B) {
+	b.Run("io", func(b *testing.B) {
+		c := RotCache{Hasher: testHash{}}
+		_ = c.SetString("foo", "qwerty")
+		_ = c.SetString("bar", "asdfgh")
+		c.Rotate()
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			if s, err := c.GetString("bar"); err != nil || s != "asdfgh" {
+				b.Error("read failed", err)
+			}
+		}
+	})
+	b.Run("io parallel", func(b *testing.B) {
+		c := RotCache{Hasher: testHash{}}
+		write := func(c *RotCache) {
+			c.Prepare()
+			_ = c.SetString("foo", "qwerty")
+			_ = c.SetString("bar", "asdfgh")
+			c.Rotate()
+		}
+		write(&c)
+
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+		ticker := time.NewTicker(time.Millisecond * 100)
+		go func() {
+			for {
+				select {
+				case <-ticker.C:
+					write(&c)
+				case <-ctx.Done():
+					return
+				}
+			}
+		}()
+
+		b.ReportAllocs()
+		for i := 0; i < b.N; i++ {
+			if s, err := c.GetString("bar"); err != nil || s != "asdfgh" {
+				b.Error("read failed", err)
+			}
 		}
 	})
 }
