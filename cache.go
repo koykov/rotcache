@@ -4,20 +4,25 @@ import (
 	"sync"
 )
 
+// Internal cache implementation.
 type cache struct {
-	lock pseudoLock
-	idx  map[uint64]entry
-	buf  []byte
 	once sync.Once
+	lock pseudoLock
+	// Key-entry pairs storage. Entry value points to offset and length of actual value in buf.
+	idx map[uint64]entry
+	// Data storage.
+	buf []byte
 }
 
 func (c *cache) init() *cache {
+	// Once apply init logic for each cache instance.
 	c.once.Do(func() {
 		c.idx = make(map[uint64]entry)
 	})
 	return c
 }
 
+// Set value to the buf using hashed key.
 func (c *cache) set(key uint64, val []byte) {
 	c.lock.Lock()
 	if c.idx == nil {
@@ -30,6 +35,7 @@ func (c *cache) set(key uint64, val []byte) {
 	c.lock.Unlock()
 }
 
+// Get value from the buf using hashed key.
 func (c *cache) get(key uint64) ([]byte, error) {
 	c.lock.Lock()
 	defer c.lock.Unlock()
