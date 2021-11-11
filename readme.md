@@ -17,8 +17,8 @@ go func() {
         _ = c.ISetString(111, "asd")
         _ = c.SetString("qwe", "rty")
         c.Rotate()
-		time.Sleep(time.Second)
-		// cancellation logic ...
+        time.Sleep(time.Second)
+        // cancellation logic ...
     }
 }()
 
