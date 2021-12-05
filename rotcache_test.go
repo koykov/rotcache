@@ -120,6 +120,7 @@ func BenchmarkRotCache(b *testing.B) {
 				case <-ticker.C:
 					write(&c)
 				case <-ctx.Done():
+					ticker.Stop()
 					return
 				}
 			}
@@ -131,5 +132,6 @@ func BenchmarkRotCache(b *testing.B) {
 				b.Error("read failed", err)
 			}
 		}
+		cancel()
 	})
 }
