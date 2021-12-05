@@ -71,15 +71,15 @@ func (c *RotCache) get(key uint64) ([]byte, error) {
 
 // Get instance of actual cache.
 func (c *RotCache) act() *cache {
-	return (&c.buf[atomic.LoadUint32(&c.idx)]).init()
+	return &c.buf[atomic.LoadUint32(&c.idx)]
 }
 
 // Get instance of opposite cache.
 func (c *RotCache) opp() *cache {
 	switch atomic.LoadUint32(&c.idx) {
 	case 0:
-		return (&c.buf[1]).init()
+		return &c.buf[1]
 	default:
-		return (&c.buf[0]).init()
+		return &c.buf[0]
 	}
 }
