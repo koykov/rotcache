@@ -1,6 +1,10 @@
 package rotcache
 
-import "sync/atomic"
+import (
+	"sync/atomic"
+
+	"github.com/koykov/entry"
+)
 
 // Internal cache implementation.
 type cache struct {
@@ -14,7 +18,7 @@ type cache struct {
 
 type idx struct {
 	h uint64
-	e entry
+	e entry.Entry64
 }
 
 // Set value to the buf using hashed key.
@@ -23,8 +27,8 @@ func (c *cache) set(key uint64, val []byte) {
 	c.waitLock()
 	atomic.StoreUint32(&c.lock, 1)
 	defer atomic.StoreUint32(&c.lock, 0)
-	var e entry
-	e.encode(uln(c.buf), uln(val))
+	var e entry.Entry64
+	e.Encode(uln(c.buf), uln(val))
 	c.idx = append(c.idx, idx{
 		h: key,
 		e: e,
@@ -43,7 +47,7 @@ func (c *cache) get(key uint64) ([]byte, error) {
 	for i := 0; i < l; i++ {
 		if c.idx[i].h == key {
 			e := c.idx[i].e
-			if off, ln := e.decode(); ln < uln(c.buf) {
+			if off, ln := e.Decode(); ln < uln(c.buf) {
 				return c.buf[off : off+ln], nil
 			}
 		}
