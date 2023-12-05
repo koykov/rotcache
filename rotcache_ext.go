@@ -2,11 +2,11 @@ package rotcache
 
 // Extended setters and getters.
 
-import "github.com/koykov/fastconv"
+import "github.com/koykov/byteconv"
 
 // SetString sets string value with string key.
 func (c *RotCache) SetString(key, val string) error {
-	return c.Set(key, fastconv.S2B(val))
+	return c.Set(key, byteconv.S2B(val))
 }
 
 // USet sets new value with uint64 key.
@@ -23,7 +23,7 @@ func (c *RotCache) USetString(key uint64, val string) error {
 	if len(val) == 0 {
 		return ErrNoValue
 	}
-	c.set(key, fastconv.S2B(val))
+	c.set(key, byteconv.S2B(val))
 	return nil
 }
 
@@ -40,7 +40,7 @@ func (c *RotCache) ISetString(key int64, val string) error {
 // GetString gets stored value as string.
 func (c *RotCache) GetString(key string) (string, error) {
 	p, err := c.Get(key)
-	return fastconv.B2S(p), err
+	return byteconv.B2S(p), err
 }
 
 // UGet get stored value using uint64 key.
@@ -54,7 +54,7 @@ func (c *RotCache) UGetString(key uint64) (s string, err error) {
 	if p, err = c.get(key); err != nil {
 		return "", err
 	}
-	return fastconv.B2S(p), err
+	return byteconv.B2S(p), err
 }
 
 // IGet get stored value using int64 key.
